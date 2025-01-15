@@ -11,6 +11,7 @@ exports.registerUser = async (req,res,next)=>{
   }
 
   const {fullname,email,password} = req.body;
+  // console.log("line 14 - > ",fullname,email,password);
 
   const existingUser = await UserModel.findOne({email});
 
@@ -30,18 +31,20 @@ exports.registerUser = async (req,res,next)=>{
     //   password:hashedPassword
     // })
 
+    // console.log("checking data before creatUser - >",fullname.firstName,fullname.lastName,email,password);
+
     const newUser = await createUser({
-      fullname:{
-        firstName:fullname.firstName,
-        lastName:fullname.lastName
-      },
+    
+      firstName:fullname.firstName,
+      lastName:fullname.lastName, 
       email,
       password:hashedPassword
     })
+    // console.log("line 42 create user->",newUser);
 
     const token = newUser.generateAuthToken();
     console.log(token,newUser);
-    res.status(201).json({message: "User created successfully",token,newUser});
+    res.status(200).json({message: "User created successfully",token,newUser});
   }
   catch(err){
     console.log(err);
@@ -78,7 +81,7 @@ exports.loginUser = async(req,res,next)=>{
     console.log(token,existingUser);
 
 
-    res.cookie("token",token,{httpOnly: true}).status(201).json({message: "User logged in successfully",token,existingUser});
+    res.cookie("token",token,{httpOnly: true}).status(200).json({message: "User logged in successfully",token,existingUser});
 
   }
   catch(err){

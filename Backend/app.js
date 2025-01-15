@@ -18,6 +18,6 @@ app.get('/',(req,res)=>{
 })
 
 app.use('/users',require("./routes/userRoutes"))
-app.use('/captain',require("./routes/captainRoutes"))
+app.use('/captains',require("./routes/captainRoutes"))
 
 module.exports = app;

@@ -1,35 +1,69 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { CaptainDataContext } from '../context/CaptainContext';
+import { useContext } from 'react';
+import axios from 'axios';
+
 
 const CaptainSignUp = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [captainData, setCaptainData] = useState({});
+  const [vehicleColor, setVehicleColor] = useState('');
+  const [vehiclePlate, setVehiclePlate] = useState('');
+  const [vehicleCapacity, setVehicleCapacity] = useState('');
+  const [vehicleType, setVehicleType] = useState('');
+  const navigate = useNavigate();
+  const { captain, setCaptain } = useContext(CaptainDataContext);
 
-  const handleSubmit = (e) => {
+  const handleSubmit =async (e) => {
     e.preventDefault();
 
-    setCaptainData({
-      fullname:{
+    const captainData = {
+      fullname: {
         firstName: firstName,
-        lastName: lastName
+        lastName: lastName,
       },
       email: email,
       password: password,
-    });
+      vehicle: {
+        color: vehicleColor,
+        plate: vehiclePlate,
+        capacity: vehicleCapacity,
+        vehicleType: vehicleType,
+      },
+    };
+    // console.log("checking the captain data-> ",captainData);
 
-    console.log(captainData);
+    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/captains/register`,captainData);
+    
+    if(response.status===200){
+      const data = response.data;
+      setCaptain(data.captain);
+      localStorage.setItem("token",data.token);
+      navigate('/captain-login');
+    }
+
+
+    // setCaptain(captainData);
+    // console.log(captainData);
 
     // Reset form fields
     setFirstName('');
     setLastName('');
     setEmail('');
-    setPhoneNumber('');
     setPassword('');
-    setConfirmPassword('');
+    setVehicleColor('');
+    setVehiclePlate('');
+    setVehicleCapacity('');
+    setVehicleType('');
+
+
+   
   };
+
+  
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -43,7 +77,6 @@ const CaptainSignUp = () => {
         <form className="space-y-6" onSubmit={handleSubmit}>
           {/* Name Fields in a Row */}
           <div className="flex space-x-4">
-            {/* First Name Field */}
             <div className="flex-1">
               <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
                 First Name
@@ -59,7 +92,6 @@ const CaptainSignUp = () => {
               />
             </div>
 
-            {/* Last Name Field */}
             <div className="flex-1">
               <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
                 Last Name
@@ -92,23 +124,74 @@ const CaptainSignUp = () => {
             />
           </div>
 
-          {/* Phone Number Field */}
+          {/* Vehicle Details */}
           <div>
-            <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
-              Phone Number
+            <label htmlFor="vehicleColor" className="block text-sm font-medium text-gray-700">
+              Vehicle Color
             </label>
             <input
-              id="phoneNumber"
-              type="tel"
-              placeholder="Enter your phone number"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
+              id="vehicleColor"
+              type="text"
+              placeholder="Enter vehicle color"
+              value={vehicleColor}
+              onChange={(e) => setVehicleColor(e.target.value)}
               required
               className="mt-1 w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
 
-          {/* Password Field */}
+          <div>
+            <label htmlFor="vehiclePlate" className="block text-sm font-medium text-gray-700">
+              Vehicle Plate
+            </label>
+            <input
+              id="vehiclePlate"
+              type="text"
+              placeholder="Enter vehicle plate"
+              value={vehiclePlate}
+              onChange={(e) => setVehiclePlate(e.target.value)}
+              required
+              className="mt-1 w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="vehicleCapacity" className="block text-sm font-medium text-gray-700">
+              Vehicle Capacity
+            </label>
+            <input
+              id="vehicleCapacity"
+              type="number"
+              placeholder="Enter vehicle capacity"
+              value={vehicleCapacity}
+              onChange={(e) => setVehicleCapacity(e.target.value)}
+              required
+              className="mt-1 w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="vehicleType" className="block text-sm font-medium text-gray-700">
+              Vehicle Type
+            </label>
+            <select
+              id="vehicleType"
+              value={vehicleType}
+              onChange={(e) => setVehicleType(e.target.value)}
+              required
+              className="mt-1 w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            >
+              <option value="" disabled>
+                Select vehicle type
+              </option>
+              <option value="Car">Car</option>
+              <option value="Auto">Auto</option>
+              <option value="Bike">Bike</option>
+            </select>
+          </div>
+
+
+          {/* Password Fields */}
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700">
               Password
@@ -124,29 +207,13 @@ const CaptainSignUp = () => {
             />
           </div>
 
-          {/* Confirm Password Field */}
-          <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-              Confirm Password
-            </label>
-            <input
-              id="confirmPassword"
-              type="password"
-              placeholder="Re-enter your password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              className="mt-1 w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-            />
-          </div>
-
           {/* Sign Up Button */}
           <div>
             <button
               type="submit"
               className="w-full bg-black text-white py-2 px-4 rounded-lg font-semibold border hover:bg-gray-200 hover:text-black transition duration-200"
             >
-              Sign Up
+              Sign Up as Captain
             </button>
           </div>
         </form>

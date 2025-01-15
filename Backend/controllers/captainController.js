@@ -10,7 +10,7 @@ exports.registerCaptain = async(req,res,next)=>{
     return res.status(400).json({errors: error.array()});
   }
     
-
+  // console.log("this is req.body",req.body);
   const {fullname,email,password,vehicle} = req.body;
 
   const isCaptainExist = await captainModel.findOne({email});
@@ -36,7 +36,7 @@ exports.registerCaptain = async(req,res,next)=>{
 
     const token = newCaptain.generateAuthToken();
 
-    res.status(201).json({message: "Captain registered successfully",token,newCaptain});
+    res.status(200).json({message: "Captain registered successfully",token,newCaptain});
   }
   catch(err){
     console.log(err);

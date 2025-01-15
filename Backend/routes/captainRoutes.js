@@ -10,11 +10,11 @@ router.post('/register',
   [
     body('fullname.firstName').isLength({min:3}).withMessage("First name is required"),
     body('email').isEmail().withMessage("Invalid email"),
-    body('password').isLength({min:6}).withMessage("Password is required"),
+    body('password').isLength({min:3}).withMessage("Password is required"),
     body('vehicle.color').isLength({min:3}).withMessage("Color is required"),
     body('vehicle.plate').isLength({min:3}).withMessage('Plate is required'),
     body('vehicle.capacity').isInt({min:1}).withMessage('Capacity is required'),
-    body('vehicle.vehicleType').isIn(['bike','car','auto']).withMessage('Type is required')],
+    body('vehicle.vehicleType').isIn(['Bike','Car','Auto']).withMessage('Type is required')],
   registerCaptain) ;
 
 
