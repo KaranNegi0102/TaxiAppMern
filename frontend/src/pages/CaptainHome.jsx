@@ -5,7 +5,6 @@ const CaptainHome = () => {
   return (
     <div>
       <Link to="/captains/logout"
-      
       >Logout</Link>
     </div>
   )

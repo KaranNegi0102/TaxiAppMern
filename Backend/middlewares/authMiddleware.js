@@ -30,6 +30,8 @@ exports.authUser = async(req,res,next)=>{
 }
 
 exports.authCaptain = async(req,res,next)=>{
+  console.log("this is req.cookies > ",req.cookies);
+  console.log("this is req.headers > ",req.headers.authorization);
 
   const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
 
@@ -43,7 +45,8 @@ exports.authCaptain = async(req,res,next)=>{
     const decode = jwt.verify(token,process.env.JWT_SECRET);
     const captain=await captainModel.findById(decode._id);
     // console.log("this is user >",user)
-    req.captain=captain;
+    req.user=captain;
+    // console.log("this is req.captain > ",req.user);
     // console.log("this is req.user > ",req.user)
     next();
 

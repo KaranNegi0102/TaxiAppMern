@@ -67,7 +67,7 @@ exports.loginCaptain = async(req,res,next)=>{
     }
 
     const token = existingCaptain.generateAuthToken();
-    console.log(token,existingCaptain);
+    // console.log(token,existingCaptain);
     res.cookie("token",token,{httpOnly: true}).status(200).json({message: "Captain logged in successfully",token,existingCaptain});
   }
   catch(err){
@@ -77,11 +77,12 @@ exports.loginCaptain = async(req,res,next)=>{
 }
 
 exports.getProfile = async(req,res,next)=>{
+  console.log("line 80 req.user ->",req.user);
   res.status(200).json(req.user);
 }
 
 exports.logoutCaptain = async(req,res,next)=>{
-  const token = req.cookies.token || req.headers.authorization.split(" ")[1];
+  const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
   await blackListTokenModel.create({token});
 
   res.clearCookie("token").status(200).json({message: "Captain logged out successfully"});
