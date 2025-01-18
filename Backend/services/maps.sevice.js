@@ -41,3 +41,47 @@ module.exports.getAddressCoordinates = async (address) => {
     throw error;
   }
 };
+
+module.exports.getDistanceTime = async (origin, destination) => {
+
+  if(!origin || !destination) throw new Error("Origin and destination are required");
+
+  const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API;
+
+  try{
+    const response = await axios.get(`https://maps.gomaps.pro/maps/api/distancematrix/json?units=metric&origins=${origin}&destinations=${destination}&key=${GOOGLE_MAPS_API_KEY}`);
+
+    if(response.data.rows[0].elements[0].status === "ZERO_RESULTS"){
+      throw new Error("No route found between the two locations");}
+
+    if(response.data.status === "OK" && response.data.rows.length > 0 && response.data.rows[0].elements.length > 0){
+      return  response.data.rows[0].elements[0];  
+    }
+    else{
+      throw new Error("Error fetching distance and time");
+    }
+
+  }
+  catch(err){
+    console.log("this is error -> ",err);
+  }
+
+}
+
+module.exports.autoComplete = async (input) => {
+  const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API;
+
+  if(!input) throw new Error("Input is required");
+
+  try{
+    const response = await axios.get(`https://maps.gomaps.pro/maps/api/place/autocomplete/json?input=${input}&key=${GOOGLE_MAPS_API_KEY}`);
+
+    if(response.data.status === "OK" && response.data.predictions.length > 0){
+      return response.data.predictions;
+    }
+  }
+  catch(err){
+    console.log("this is error -> ",err);
+    res.status(500).json({message: "Internal server error"});
+  }
+}
