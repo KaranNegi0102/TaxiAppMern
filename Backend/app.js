@@ -21,6 +21,6 @@ app.get('/',(req,res)=>{
 app.use('/users',require("./routes/userRoutes"))
 app.use('/captains',require("./routes/captainRoutes"))
 app.use('/maps',require("./routes/mapsRoutes"))
-
+app.use('/rides',require("./routes/ridesRoutes"))
 
 module.exports = app;

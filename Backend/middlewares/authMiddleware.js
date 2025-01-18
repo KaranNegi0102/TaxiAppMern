@@ -20,7 +20,7 @@ exports.authUser = async(req,res,next)=>{
     const user=await UserModel.findById(decode._id);
     // console.log("this is user >",user)
     req.user=user;
-    // console.log("this is req.user > ",req.user)
+    console.log("this is req.user > ",req.user)
     next();
 
   }catch(err){
