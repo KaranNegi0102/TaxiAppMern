@@ -1,23 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
-import LocationSearchPanel from '../components/LocationSearchPanel';
+import LocationSearchPanel from '../components/LocationSearchPanel'; // Import LocationSearchPanel component
 import VehiclePanel from '../components/VehiclePanel'; // Import VehiclePanel component
 import ConfirmRide from '../components/ConfirmRide';
 import LookingForDriver from '../components/LookingForDriver';
 import WaitingForDriver from '../components/WaitingForDriver';
-
+import axios from 'axios';
 
 const Home = () => {
-  const [pickUp, setPickUp] = useState('');
-  const [destination, setDestination] = useState('');
+  const [ pickup, setPickup ] = useState('')
+  const [ destination, setDestination ] = useState('')
   const [panelOpen, setPanelOpen] = useState(false);
   const [rides, setRides] = useState([]); // State to hold ride data
-  const [activeInput, setActiveInput] = useState(''); // Track active input (pickUp or destination)
+  const [activeInput, setActiveInput] = useState(null); // Track active input (pickUp or destination)
   const [vehiclePanelOpen, setVehiclePanelOpen] = useState(false); // State to track if vehicle panel should be open
   const [selectedRide, setSelectedRide] = useState(null); // New state for selected ride
   const [isLookingForDriver, setIsLookingForDriver] = useState(false); // State for looking for driver
   const [isWaitingForDriver, setIsWaitingForDriver] = useState(false);
-
+  const [pickUpSuggestions , setPickUpSuggestions] = useState([]);
+  const [destinationSuggestions , setDestinationSuggestions] = useState([]);
 
   const formRef = useRef(null);
   const panelRef = useRef(null);
@@ -65,80 +66,47 @@ const Home = () => {
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Pick up:', pickUp);
+    console.log('Pick up:',   pickup);
     console.log('Destination:', destination);
+  };
 
-    // Simulating ride data (replace with actual data fetching logic)
-    setRides([
-      {
-        rideName: 'Motorcycle Ride 1',
-        timeLeft: '15 min',
-        price: '$8',
-        type: 'motorcycle',
-      },
-      {
-        rideName: 'Car Ride 1',
-        timeLeft: '30 min',
-        price: '$25',
-        type: 'car',
-      },
-      {
-        rideName: 'Bike Ride 1',
-        timeLeft: '10 min',
-        price: '$5',
-        type: 'bike',
-      },
-      {
-        rideName: 'Motorcycle Ride 2',
-        timeLeft: '25 min',
-        price: '$12',
-        type: 'motorcycle',
-      },
-      {
-        rideName: 'Car Ride 2',
-        timeLeft: '40 min',
-        price: '$30',
-        type: 'car',
-      },
-    ]);
-
-    // Set vehiclePanelOpen to true if pickUp and destination are both selected
-    if (pickUp && destination) {
-      setVehiclePanelOpen(true); // Open vehicle panel
+  const handlePickupChange = async (e)=>{
+    setPickup(e.target.value);
+    try{
+      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`,
+        {params : {input : e.target.value},
+        headers:{
+          Authorization : `Bearer ${localStorage.getItem("token")}`
+        }}
+      )
+      console.log("this is response pickup -> ",response.data);
+      setPickUpSuggestions(response.data);
     }
-
-    setPanelOpen(false); // Close the location panel after submission
-  };
-
-  const handleRideSelect = (ride) => {
-    setSelectedRide(ride); // Set selected ride
-  };
-
-  const handleConfirmRide= ()=>{
-    setIsLookingForDriver(true);
-
-    setTimeout(() => {
-      setIsLookingForDriver(false);
-      setIsWaitingForDriver(true);
-    }, 3000);
+    catch(err){
+      console.log(err);
+    }
   }
 
-  // Group rides by type (motorcycle, car, bike)
-  const groupedRides = {
-    motorcycle: rides.filter(ride => ride.type === 'motorcycle'),
-    car: rides.filter(ride => ride.type === 'car'),
-    bike: rides.filter(ride => ride.type === 'bike'),
-  };
 
-  // Handle location selection and open vehicle panel
-  const handleLocationSelect = (location) => {
-    if (activeInput === 'pickUp') {
-      setPickUp(location); // Update pick-up location
-    } else if (activeInput === 'destination') {
-      setDestination(location); // Update destination location
+  const handleDestinationChange = async (e)=>{
+    setDestination(e.target.value);
+    try{
+      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`,
+        {params : {input : e.target.value},
+        headers:{
+          Authorization : `Bearer ${localStorage.getItem("token")}`
+        }}
+      )
+      console.log("this is response destination -> ",response.data);
+      setDestinationSuggestions(response.data);
     }
-    setPanelOpen(false); // Close the location panel after selection
-  };
+    catch(err){
+      console.log(err);
+    }
+  }
+
+  console.log("this is pickup -> ",pickUpSuggestions);
+
 
   return (
     <div className="flex flex-col px-4 py-2 text-gray-800 bg-gray-700 min-h-screen">
@@ -170,8 +138,8 @@ const Home = () => {
                   setPanelOpen(true);
                   setActiveInput('pickUp'); // Set the active input as pickUp
                 }} // Open panel on click
-                value={pickUp}
-                onChange={(e) => setPickUp(e.target.value)}
+                value={pickup}
+                onChange={handlePickupChange}
                 placeholder="Add a pick-up location"
                 className="w-full px-4 py-2 text-base border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -182,7 +150,7 @@ const Home = () => {
                   setActiveInput('destination'); // Set the active input as destination
                 }} // Open panel on click
                 value={destination}
-                onChange={(e) => setDestination(e.target.value)}
+                onChange={handleDestinationChange}
                 placeholder="Enter your destination"
                 className="w-full px-4 py-2 text-base border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -204,7 +172,13 @@ const Home = () => {
               transition: 'height 0.6s ease-in-out',
             }}
           >
-            <LocationSearchPanel onLocationSelect={handleLocationSelect} />
+            <LocationSearchPanel 
+                  suggestions={activeInput === 'pickUp' ? pickUpSuggestions : destinationSuggestions}
+                  setPickUp={setPickup}
+                  setDestination={setDestination}
+                  activeInput={activeInput}
+              />
+
           </div>
 
           {/* Arrow Toggle */}
@@ -236,7 +210,7 @@ const Home = () => {
       </div>
 
       {/* Render Vehicle Panel if both pickUp and destination are filled */}
-      {vehiclePanelOpen && pickUp && destination && (
+      {vehiclePanelOpen && pickup && destination && (
         <div ref={panelRef} className="mt-8 bg-white p-6 rounded-lg shadow-lg">
           <VehiclePanel groupedRides={groupedRides} onRideSelect={handleRideSelect} />
         </div>
