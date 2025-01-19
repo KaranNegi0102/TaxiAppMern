@@ -2,7 +2,7 @@ import React from 'react';
 
 const LocationSearchPanel = ({ suggestions, activeInput, setPickUp, setDestination }) => {
     const handleSuggestionClick = (suggestion) => {
-        if (activeInput === 'pickup') {
+        if (activeInput === 'pickUp') {
             setPickUp(suggestion.description); // Extract the correct property
         } else if (activeInput === 'destination') {
             setDestination(suggestion.description); // Extract the correct property

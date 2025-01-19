@@ -1,73 +1,35 @@
 import React from 'react'
 
 
-const VehiclePanel = ({groupedRides, onRideSelect}) => {
+const VehiclePanel = ({fare,createRide}) => {
   return (
   <div>
-    <h3 className="text-xl font-semibold mb-4 text-gray-800">Available Rides</h3>
+    <h1 className="text-xl font-semibold mb-4 text-gray-800">Available Rides</h1>
 
-{/* Displaying Motorcycle Rides */}
-{groupedRides.motorcycle.length > 0 && (
-  <div className="mb-4">
-    <h4 className="text-lg font-semibold text-gray-800">Motorcycle Rides</h4>
-    <ul className="space-y-4">
-      {groupedRides.motorcycle.map((ride, index) => (
-        <li key={index} className="flex justify-between items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-100"
-        onClick={() => onRideSelect(ride)}
-        >
-          <div className="flex flex-col">
-            <span className="font-semibold text-gray-800">{ride.rideName}</span>
-            <span className="text-gray-500">Time Left: {ride.timeLeft}</span>
-          </div>
-          <span className="text-lg font-semibold text-blue-600">{ride.price}</span>
-        </li>
-      ))}
-    </ul>
+    <div className="mb-4" >
+      <h2 className="text-lg font-semibold text-gray-800">Auto Rides</h2>
+      <ul className="space-y-4"> 
+        <button onClick={()=>createRide("Auto")}>{fare.Auto}</button>
+      </ul>
+    </div>
+
+    <div className="mb-4" onClick={()=>createRide("Car")}>
+      <h2 className="text-lg font-semibold text-gray-800">Car Rides</h2>
+      <ul className="space-y-4">
+        {/* Displaying Car Rides */}
+        <p>{fare.Car}</p>
+      </ul>
+    </div>
+
+    <div className="mb-4" onClick={()=>createRide("Bike")}>
+      <h2 className="text-lg font-semibold text-gray-800">Bike Rides</h2>
+      <ul className="space-y-4">
+        {/* Displaying Bike Rides */}
+        <p>{fare.Bike}</p>
+      </ul>
+    </div>
+
   </div>
 )}
-
-{/* Displaying Car Rides */}
-{groupedRides.car.length > 0 && (
-  <div className="mb-4">
-    <h4 className="text-lg font-semibold text-gray-800">Car Rides</h4>
-    <ul className="space-y-4">
-      {groupedRides.car.map((ride, index) => (
-        <li key={index} className="flex justify-between items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-100"
-        onClick={() => onRideSelect(ride)}
-        >
-          <div className="flex flex-col">
-            <span className="font-semibold text-gray-800">{ride.rideName}</span>
-            <span className="text-gray-500">Time Left: {ride.timeLeft}</span>
-          </div>
-          <span className="text-lg font-semibold text-blue-600">{ride.price}</span>
-        </li>
-      ))}
-    </ul>
-  </div>
-)}
-
-{/* Displaying Bike Rides */}
-{groupedRides.bike.length > 0 && (
-  <div className="mb-4">
-    <h4 className="text-lg font-semibold text-gray-800">Bike Rides</h4>
-    <ul className="space-y-4">
-      {groupedRides.bike.map((ride, index) => (
-        <li key={index} className="flex justify-between items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-100"
-        onClick={() => onRideSelect(ride)}
-        >
-          <div className="flex flex-col">
-            <span className="font-semibold text-gray-800">{ride.rideName}</span>
-            <span className="text-gray-500">Time Left: {ride.timeLeft}</span>
-          </div>
-          <span className="text-lg font-semibold text-blue-600">{ride.price}</span>
-        </li>
-      ))}
-    </ul>
-  </div>
-)}
-  </div>
-     
-  )
-}
 
 export default VehiclePanel

@@ -19,6 +19,7 @@ const Home = () => {
   const [isWaitingForDriver, setIsWaitingForDriver] = useState(false);
   const [pickUpSuggestions , setPickUpSuggestions] = useState([]);
   const [destinationSuggestions , setDestinationSuggestions] = useState([]);
+  const [fare , setFare] = useState({});
 
   const formRef = useRef(null);
   const panelRef = useRef(null);
@@ -28,7 +29,7 @@ const Home = () => {
   useEffect(() => {
     if (panelOpen) {
       gsap.to(panelRef.current, {
-        height: '200px', // Expand panel height
+        height: '300px', // Expand panel height
         duration: 0.5,
         ease: 'power3.out',
       });
@@ -107,6 +108,37 @@ const Home = () => {
 
   console.log("this is pickup -> ",pickUpSuggestions);
 
+  async function findTrip(){
+    setVehiclePanelOpen(true);
+    setPanelOpen(false);
+
+    const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/rides/get-fare`,{
+      params : {pickup,destination},
+      headers : {
+        Authorization : `Bearer ${localStorage.getItem("token")}`
+      }
+    })
+    console.log("this is response -> ",response.data);
+    setFare(response.data);
+
+
+    }
+
+    async function createRide() {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/rides/create`, {
+          pickup,
+          destination,
+          // vehicleType
+      }, {
+          headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+      })
+
+      console.log("this is response -> ",response.data);
+
+  }
+
 
   return (
     <div className="flex flex-col px-4 py-2 text-gray-800 bg-gray-700 min-h-screen">
@@ -155,6 +187,7 @@ const Home = () => {
                 className="w-full px-4 py-2 text-base border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <button
+                onClick={findTrip}
                 type="submit"
                 className="w-full px-4 py-2 text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
@@ -212,14 +245,17 @@ const Home = () => {
       {/* Render Vehicle Panel if both pickUp and destination are filled */}
       {vehiclePanelOpen && pickup && destination && (
         <div ref={panelRef} className="mt-8 bg-white p-6 rounded-lg shadow-lg">
-          <VehiclePanel groupedRides={groupedRides} onRideSelect={handleRideSelect} />
+          <VehiclePanel fare={fare} createRide={createRide} />
         </div>
       )}
 
       {/* Show ConfirmRide panel if a ride is selected */}
       {selectedRide && (
         <div className="mt-8 bg-white p-6 rounded-lg shadow-lg">
-          <ConfirmRide selectedRide={selectedRide}  onConfirmRide={handleConfirmRide}/>
+          <ConfirmRide selectedRide={selectedRide}  onConfirmRide={() => {
+        setIsLookingForDriver(true);
+        setSelectedRide(null); 
+      }}/>
         </div>
       )}
 
@@ -237,7 +273,11 @@ const Home = () => {
         <WaitingForDriver />
         </div>
       )}
+
+      
     </div>
+
+    
   );
 };
 
