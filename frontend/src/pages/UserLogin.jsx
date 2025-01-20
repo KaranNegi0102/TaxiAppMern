@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import { Link , useNavigate } from 'react-router-dom';
 import axios from 'axios'
 import { useContext } from 'react';
@@ -7,10 +7,8 @@ import { UserDataContext } from '../context/UserContext';
 const UserLogin = () => {
 
   const {user,setUser} = useContext(UserDataContext);
-
   const [email , setEmail] = useState('');
   const [password, setPassword] = useState('');
-  // const [userData, setUserData] = useState({});
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -19,6 +17,7 @@ const UserLogin = () => {
       email: email,
       password: password
     }
+    console.log("this is user data-> ",userData);
 
 
     // Sending POST request to backend
@@ -36,10 +35,16 @@ const UserLogin = () => {
     
 
 
-    console.log("this is user-> ",user);
+    
+
     setEmail('');
     setPassword('');
-  }
+  };
+  console.log("this is user-> ",user);
+
+  useEffect(() => {
+    console.log('User updated in UserLogin -> ', user);
+  }, [user]);
 
 
   return (

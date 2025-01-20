@@ -11,12 +11,12 @@ exports.getMap = async(req,res,next)=>{
 
   const {address} = req.query;
   try{
-    console.log("this is address in mapsController-> ",address);
+    // console.log("this is address in mapsController-> ",address);
     const coordinates = await mapService.getAddressCoordinates(address);
     res.status(200).json(coordinates);
 
   }catch(err){
-    console.log("yaha par error h ")
+    // console.log("yaha par error h ")
     res.status(500).json({message: "Internal server error"});
   }
 }
@@ -34,7 +34,7 @@ exports.getDistance = async(req,res,next)=>{
     res.status(200).json(distanceTime);
 
   }catch(err){
-    console.log("yaha par error h ")
+    // console.log("yaha par error h ")
     res.status(500).json({message: "Internal server error"});
   }
 

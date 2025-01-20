@@ -19,6 +19,7 @@ const UserProtectedWrapper = ({children}) => {
       }
     }).then((response)=>{
       if(response.status === 200){
+        // console.log("this is response.data -> ",response.data);
         setUser(response.data);
         setIsLoading(false);
       }
@@ -29,7 +30,7 @@ const UserProtectedWrapper = ({children}) => {
     })
 
 
-  },[token,navigate,setUser]);
+  },[token]);
 
   if (isLoading) {
     return <div>Loading...</div>;

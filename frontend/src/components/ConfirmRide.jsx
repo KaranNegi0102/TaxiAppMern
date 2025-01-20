@@ -1,6 +1,6 @@
 import React from 'react'
 
-const ConfirmRide = (props) => {
+const ConfirmRide = ({pickup,destination,fare,vehicleType,createRide,setConfirmRidePanel, setVehiclePanelOpen,setIsLookingForDriver}) => {
     return (
         <div>
             <h5 className='p-1 text-center w-[93%] absolute top-0' ><i className="text-3xl text-gray-200 ri-arrow-down-wide-line"></i></h5>
@@ -12,28 +12,30 @@ const ConfirmRide = (props) => {
                     <div className='flex items-center gap-5 p-3 border-b-2'>
                         <i className="ri-map-pin-user-fill"></i>
                         <div>
-                            <h3 className='text-lg font-medium'></h3>
-                            <p className='text-sm -mt-1 text-gray-600'>{props.pickup}</p>
+                            <h3 className='text-lg font-medium'>Pickup Location</h3>
+                            <p className='text-sm -mt-1 text-gray-600'>{pickup}</p>
                         </div>
                     </div>
                     <div className='flex items-center gap-5 p-3 border-b-2'>
                         <i className="text-lg ri-map-pin-2-fill"></i>
                         <div>
-                            <h3 className='text-lg font-medium'></h3>
-                            <p className='text-sm -mt-1 text-gray-600'>{props.destination}</p>
+                            <h3 className='text-lg font-medium'> Drop Location</h3>
+                            <p className='text-sm -mt-1 text-gray-600'>{destination}</p>
                         </div>
                     </div>
                     <div className='flex items-center gap-5 p-3'>
                         <i className="ri-currency-line"></i>
                         <div>
-                            <h3 className='text-lg font-medium'>₹{props.fare[ props.vehicleType ]}</h3>
-                            <p className='text-sm -mt-1 text-gray-600'>Cash Cash</p>
+                            <h3 className='text-lg font-medium'>₹{fare[ vehicleType ]}</h3>
+                            <p className='text-sm -mt-1 text-gray-600'>Cash</p>
                         </div>
                     </div>
                 </div>
                 <button onClick={() => {
-                    props.setConfirmRidePanel(false)
-                    props.createRide()
+                    setConfirmRidePanel(false)
+                    createRide()
+                    setVehiclePanelOpen(false)
+                    setIsLookingForDriver(true)
 
                 }} className='w-full mt-5 bg-green-600 text-white font-semibold p-2 rounded-lg'>Confirm</button>
             </div>

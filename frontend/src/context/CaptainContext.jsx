@@ -19,6 +19,9 @@ const CaptainContext = ({children}) => {
       vehicleType: "",
     },
   });
+
+  console.log("this is captain in captainCOntext -> ",captain);
+
   const [isLoading,setIsLoading] = useState(false);
   const [error,setError] = useState(null);
 

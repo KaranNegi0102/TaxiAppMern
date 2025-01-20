@@ -27,7 +27,7 @@ async function getFare(pickup, destination) {
       Bike:1.5
     }
 
-    console.log("this is distanceTime -> ",distanceTime);
+    // console.log("this is distanceTime -> ",distanceTime);
 
     const fare = {
       Auto: Math.round(baseFare.Auto + ((distanceTime.distance.value / 1000) * perKmRate.Auto) + ((distanceTime.duration.value / 60) * perMinuteRate.Auto)),
@@ -35,7 +35,7 @@ async function getFare(pickup, destination) {
       Bike : Math.round(baseFare.Bike + ((distanceTime.distance.value / 1000) * perKmRate.Bike) + ((distanceTime.duration.value / 60) * perMinuteRate.Bike))
   };
 
-  console.log("this is fare -> ",fare);
+  // console.log("this is fare -> ",fare);
   return fare;
 
   } catch (error) {
@@ -59,9 +59,9 @@ function getOtp(num){
 // Generating fare and creating a ride
 exports.createRide = async ({user,pickup,destination,vehicleType}) => {
   
-  console.log("this ispickup:", pickup);
-  console.log("destination:", destination);
-  console.log("vehicleType:", vehicleType);
+  // console.log("this ispickup:", pickup);
+  // console.log("destination:", destination);
+  // console.log("vehicleType:", vehicleType);
 
   try{
 
@@ -81,7 +81,7 @@ exports.createRide = async ({user,pickup,destination,vehicleType}) => {
     fare:fare[vehicleType],
     });
 
-    console.log("this is ride 1-> ",ride);
+    // console.log("this is ride 1-> ",ride);
 
   return ride;
   }

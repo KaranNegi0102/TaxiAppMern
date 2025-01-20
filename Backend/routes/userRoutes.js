@@ -19,9 +19,9 @@ router.post('/login',
   ]
   ,loginUser);
 
-router.get('/profile',authCaptain,getProfile);
+router.get('/profile',authUser,getProfile);
 
-router.get('/logout',authCaptain,logoutUser);
+router.get('/logout',authUser,logoutUser);
 
 
 

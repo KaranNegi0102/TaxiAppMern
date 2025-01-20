@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 const CaptainLogin = () => {
   const {captain , setCaptain} = useContext(CaptainDataContext);
-  // console.log("thus is captain=> ",captain);
+  console.log("thus is captain=> ",captain);
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

@@ -7,6 +7,10 @@ import LookingForDriver from '../components/LookingForDriver';
 import WaitingForDriver from '../components/WaitingForDriver';
 import axios from 'axios';
 
+import { SocketContext } from '../context/SocketContext';
+import { useContext } from 'react';
+import { UserDataContext } from '../context/UserContext';
+
 const Home = () => {
   const [ pickup, setPickup ] = useState('')
   const [ destination, setDestination ] = useState('')
@@ -26,6 +30,26 @@ const Home = () => {
   const formRef = useRef(null);
   const panelRef = useRef(null);
   const arrowRef = useRef(null);
+
+  const { socket } = useContext(SocketContext)
+  const { user } = useContext(UserDataContext)
+  console.log(user);
+
+  useEffect(() => {
+    socket.emit("join", { userType: "user", userId: user._id })
+  }, [ user ])
+
+  // socket.on('ride-confirmed', ride => {
+  //     setVehicleFound(false)
+  //     setWaitingForDriver(true)
+  //     setRide(ride)
+  // })
+
+  // socket.on('ride-started', ride => {
+  //     console.log("ride")
+  //     setWaitingForDriver(false)
+  //     navigate('/riding', { state: { ride } }) // Updated navigate to include ride data
+  // })
 
   // Animate the panel's height
   useEffect(() => {
@@ -114,6 +138,7 @@ const Home = () => {
   async function findTrip(){
     setVehiclePanelOpen(true);
     setPanelOpen(false);
+    setConfirmRidePanel(false);
 
     const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/rides/get-fare`,{
       params : {pickup,destination},
@@ -153,10 +178,13 @@ const Home = () => {
 
   }
 
+  // console.log("this is user object in home",user)
+
 
   return (
     <div className="flex flex-col px-4 py-2 text-gray-800 bg-gray-700 min-h-screen">
       {/* Logo Section */}
+      <div>{user.email}</div>
       <div className="flex flex-col items-center">
         <img
           src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-JiKjZXhUDnG5fa4Dra2ntuAIeV7iGcWnlw&s"
@@ -177,7 +205,6 @@ const Home = () => {
             <h4 className="text-2xl font-bold mb-3 text-gray-800 text-center md:text-left">
               Find a Trip
             </h4>
-            <button onClick={()=>createRide()}>create ride </button>
             
             <form onSubmit={handleSubmit} className="space-y-4">
               <input
@@ -226,6 +253,7 @@ const Home = () => {
                   setPickUp={setPickup}
                   setDestination={setDestination}
                   activeInput={activeInput}
+                  setPanelOpen={setPanelOpen}
               />
 
           </div>
@@ -262,13 +290,18 @@ const Home = () => {
       {/* Render Vehicle Panel if both pickUp and destination are filled */}
       {vehiclePanelOpen && pickup && destination && (
         <div ref={panelRef} className="mt-8 bg-white p-6 rounded-lg shadow-lg">
-          <VehiclePanel vehicleType={setVehicleType} fare={fare} setConfirmRidePanel={setConfirmRidePanel} />
+          <VehiclePanel 
+          vehicleType={setVehicleType} 
+          fare={fare} 
+          setConfirmRidePanel={setConfirmRidePanel}
+          setVehiclePanelOpen={setVehiclePanelOpen}
+          />
         </div>
       )}
 
       {/* Confirm Ride Panel */}
       {confirmRidePanel && (
-        <div className="fixed w-full z-10 bottom-0 bg-white px-3 py-6 pt-12">
+        <div ref={panelRef} className="fixed w-full z-10 bottom-0 bg-white px-3 py-6 pt-12">
           <ConfirmRide
             createRide={createRide}
             pickup={pickup}
@@ -276,6 +309,8 @@ const Home = () => {
             fare={fare}
             vehicleType={vehicleType}
             setConfirmRidePanel={setConfirmRidePanel}
+            setVehiclePanelOpen={setVehiclePanelOpen}
+            setIsLookingForDriver={setIsLookingForDriver}
           />
         </div>
       )}
@@ -283,12 +318,14 @@ const Home = () => {
       
 
        {/* Looking for Driver */}
-       {isLookingForDriver && !isWaitingForDriver && (
-        <div className="mt-8 bg-white p-6 rounded-lg shadow-lg">
-          <LookingForDriver />
-        </div>
+       {isLookingForDriver && (
+         <div className="mt-8 bg-white p-6 rounded-lg shadow-lg">
+         <LookingForDriver fare={fare} pickup={pickup} destination={destination} vehicleType={vehicleType}/>
+       </div>
+       )}
         
-      )}
+        
+     
 
       {/* Waiting for Driver */}
       {isWaitingForDriver && (

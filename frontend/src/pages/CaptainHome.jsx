@@ -1,10 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { CaptainDataContext } from "../context/CaptainContext";
+import { useContext } from "react";
+import { SocketContext } from '../context/SocketContext';
+
 
 const CaptainHome = () => {
+
+  
   const [isAvailable, setIsAvailable] = useState(true);
   const [availableRides, setAvailableRides] = useState([]);
+  
   const navigate = useNavigate();
+
+  const { socket } = useContext(SocketContext);
+  const { captain } = useContext(CaptainDataContext);
+
+
+  useEffect(()=>{
+    socket.emit("join", { userType: "captain", userId: captain._id })
+  })
 
   useEffect(() => {
     setAvailableRides([
@@ -21,6 +36,8 @@ const CaptainHome = () => {
     navigate("/captain-otp", { state: { ride } }); // Navigate to CaptainRiding with ride details
   };
 
+
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center py-6">
       <div className="w-full max-w-4xl bg-white shadow-lg rounded-lg p-6">
@@ -33,9 +50,9 @@ const CaptainHome = () => {
               className="w-16 h-16 rounded-full border-2 border-gray-300"
             />
             <div>
-              <h2 className="text-xl font-semibold text-gray-800">John Doe</h2>
-              <p className="text-gray-600">Vehicle: Toyota Corolla</p>
-              <p className="text-gray-600">Plate: ABC-1234</p>
+              <h2 className="text-xl font-semibold text-gray-800">{captain.fullname.firstName +  " " + captain.fullname.lastName} </h2>
+              <p className="text-gray-600">vehicleColour : {captain.vehicle.color}</p>
+              <p className="text-gray-600">VehiclePlate : {captain.vehicle.plate}</p>
             </div>
           </div>
           <button

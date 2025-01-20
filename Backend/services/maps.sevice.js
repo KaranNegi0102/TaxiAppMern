@@ -82,7 +82,7 @@ module.exports.autoComplete = async (input) => {
     }
   }
   catch(err){
-    console.log("this is error -> ",err);
+    // console.log("this is error -> ",err);
     res.status(500).json({message: "Internal server error"});
   }
 }

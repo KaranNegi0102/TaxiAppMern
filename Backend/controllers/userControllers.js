@@ -66,22 +66,22 @@ exports.loginUser = async(req,res,next)=>{
   const {email,password} = req.body;
 
   try{
-    const existingUser = await UserModel.findOne({email}).select("+password");
+    const user = await UserModel.findOne({email}).select("+password");
 
-    if(!existingUser){
+    if(!user){
       return res.status(401).json({message: "Invalid email or password"});
     }
 
-    const checkPassword = await existingUser.comparePassword(password);
+    const checkPassword = await user.comparePassword(password);
     if(!checkPassword){
       return res.status(401).json({message: "Invalid password"});
     }
 
-    const token = existingUser.generateAuthToken();
-    console.log(token,existingUser);
+    const token = user.generateAuthToken();
+    console.log(token,user);
 
 
-    res.cookie("token",token,{httpOnly: true}).status(200).json({message: "User logged in successfully",token,existingUser});
+    res.cookie("token",token,{httpOnly: true}).status(200).json({message: "User logged in successfully",token,user});
 
   }
   catch(err){

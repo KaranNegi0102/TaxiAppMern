@@ -1,13 +1,13 @@
 import React from 'react';
 
-const LocationSearchPanel = ({ suggestions, activeInput, setPickUp, setDestination }) => {
+const LocationSearchPanel = ({ suggestions, activeInput, setPickUp, setDestination ,setPanelOpen}) => {
     const handleSuggestionClick = (suggestion) => {
         if (activeInput === 'pickUp') {
             setPickUp(suggestion.description); // Extract the correct property
         } else if (activeInput === 'destination') {
             setDestination(suggestion.description); // Extract the correct property
         }
-        // setPanelOpen(false); // Close the panel after selection
+        setPanelOpen(false); // Close the panel after selection
     };
 
     return (
