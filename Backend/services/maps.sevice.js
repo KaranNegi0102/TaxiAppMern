@@ -50,7 +50,8 @@ module.exports.getDistanceTime = async (origin, destination) => {
 
   try{
     const response = await axios.get(`https://maps.gomaps.pro/maps/api/distancematrix/json?units=metric&origins=${origin}&destinations=${destination}&key=${GOOGLE_MAPS_API_KEY}`);
-
+    console.log("this is response of mapsSercie -> ",response.data);
+    
     if(response.data.rows[0].elements[0].status === "ZERO_RESULTS"){
       throw new Error("No route found between the two locations");}
 

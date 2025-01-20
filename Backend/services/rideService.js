@@ -2,8 +2,8 @@ const rideModel = require("../models/rideModel");
 const { getDistanceTime } = require("../services/maps.sevice");
 const crypto = require("crypto");
 
-async function getFare(pickup, destination, vehicleType) {
-  if (!pickup || !destination || !vehicleType) 
+async function getFare(pickup, destination) {
+  if (!pickup || !destination) 
     throw new Error("Pickup, destination, and vehicle type are required");
 
   try {
@@ -29,21 +29,22 @@ async function getFare(pickup, destination, vehicleType) {
 
     console.log("this is distanceTime -> ",distanceTime);
 
-    const fare = baseFare[vehicleType] 
-      + ((distanceTime.distance.value/1000) * perKmRate[vehicleType]) 
-      + ((distanceTime.duration.value/60) * perMinuteRate[vehicleType]) ;
+    const fare = {
+      Auto: Math.round(baseFare.Auto + ((distanceTime.distance.value / 1000) * perKmRate.Auto) + ((distanceTime.duration.value / 60) * perMinuteRate.Auto)),
+      Car: Math.round(baseFare.Car + ((distanceTime.distance.value / 1000) * perKmRate.Car) + ((distanceTime.duration.value / 60) * perMinuteRate.Car)),
+      Bike : Math.round(baseFare.Bike + ((distanceTime.distance.value / 1000) * perKmRate.Bike) + ((distanceTime.duration.value / 60) * perMinuteRate.Bike))
+  };
 
-    console.log(baseFare.Car 
-      + ((distanceTime.distance.value/1000) * perKmRate.Car) 
-      + ((distanceTime.duration.value/60) * perMinuteRate.Car));
-
-    console.log("this is fare 1 -> ",fare);
-    return fare;
+  console.log("this is fare -> ",fare);
+  return fare;
 
   } catch (error) {
     throw error;
   }
 }
+
+module.exports.getFare = getFare;
+
 
 function getOtp(num){
   function generateOtp(num) { 
@@ -69,7 +70,7 @@ exports.createRide = async ({user,pickup,destination,vehicleType}) => {
     throw new Error("All fields are required");
   }
 
-  const fare = await getFare(pickup, destination, vehicleType);
+  const fare = await getFare(pickup, destination);
   console.log("this is fare 2 -> ",fare);
 
   const ride = rideModel.create({
@@ -77,7 +78,7 @@ exports.createRide = async ({user,pickup,destination,vehicleType}) => {
     pickup,
     destination,
     otp:getOtp(4),
-    fare,
+    fare:fare[vehicleType],
     });
 
     console.log("this is ride 1-> ",ride);

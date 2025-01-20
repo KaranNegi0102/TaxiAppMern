@@ -19,7 +19,9 @@ const Home = () => {
   const [isWaitingForDriver, setIsWaitingForDriver] = useState(false);
   const [pickUpSuggestions , setPickUpSuggestions] = useState([]);
   const [destinationSuggestions , setDestinationSuggestions] = useState([]);
+  const [vehicleType , setVehicleType] = useState(null);
   const [fare , setFare] = useState({});
+  const [confirmRidePanel , setConfirmRidePanel] = useState(false);
 
   const formRef = useRef(null);
   const panelRef = useRef(null);
@@ -63,6 +65,7 @@ const Home = () => {
       }
     );
   }, []);
+
 
   // Handle form submission
   const handleSubmit = (e) => {
@@ -125,10 +128,13 @@ const Home = () => {
     }
 
     async function createRide() {
-      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/rides/create`, {
+
+      try{
+        const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/rides/create`,
+          {
           pickup,
           destination,
-          // vehicleType
+          vehicleType
       }, {
           headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -136,6 +142,14 @@ const Home = () => {
       })
 
       console.log("this is response -> ",response.data);
+
+      }catch(err){
+        console.log(err);
+        console.log("this is the error -> ",err);
+      }
+
+
+      
 
   }
 
@@ -163,6 +177,8 @@ const Home = () => {
             <h4 className="text-2xl font-bold mb-3 text-gray-800 text-center md:text-left">
               Find a Trip
             </h4>
+            <button onClick={()=>createRide()}>create ride </button>
+            
             <form onSubmit={handleSubmit} className="space-y-4">
               <input
                 type="text"
@@ -214,6 +230,7 @@ const Home = () => {
 
           </div>
 
+         
           {/* Arrow Toggle */}
           <div
             ref={arrowRef}
@@ -245,19 +262,25 @@ const Home = () => {
       {/* Render Vehicle Panel if both pickUp and destination are filled */}
       {vehiclePanelOpen && pickup && destination && (
         <div ref={panelRef} className="mt-8 bg-white p-6 rounded-lg shadow-lg">
-          <VehiclePanel fare={fare} createRide={createRide} />
+          <VehiclePanel vehicleType={setVehicleType} fare={fare} setConfirmRidePanel={setConfirmRidePanel} />
         </div>
       )}
 
-      {/* Show ConfirmRide panel if a ride is selected */}
-      {selectedRide && (
-        <div className="mt-8 bg-white p-6 rounded-lg shadow-lg">
-          <ConfirmRide selectedRide={selectedRide}  onConfirmRide={() => {
-        setIsLookingForDriver(true);
-        setSelectedRide(null); 
-      }}/>
+      {/* Confirm Ride Panel */}
+      {confirmRidePanel && (
+        <div className="fixed w-full z-10 bottom-0 bg-white px-3 py-6 pt-12">
+          <ConfirmRide
+            createRide={createRide}
+            pickup={pickup}
+            destination={destination}
+            fare={fare}
+            vehicleType={vehicleType}
+            setConfirmRidePanel={setConfirmRidePanel}
+          />
         </div>
       )}
+
+      
 
        {/* Looking for Driver */}
        {isLookingForDriver && !isWaitingForDriver && (

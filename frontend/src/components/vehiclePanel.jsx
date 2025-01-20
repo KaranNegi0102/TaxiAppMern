@@ -1,7 +1,7 @@
 import React from 'react'
 
 
-const VehiclePanel = ({fare,createRide}) => {
+const VehiclePanel = ({vehicleType , fare , setConfirmRidePanel}) => {
   return (
   <div>
     <h1 className="text-xl font-semibold mb-4 text-gray-800">Available Rides</h1>
@@ -9,11 +9,15 @@ const VehiclePanel = ({fare,createRide}) => {
     <div className="mb-4" >
       <h2 className="text-lg font-semibold text-gray-800">Auto Rides</h2>
       <ul className="space-y-4"> 
-        <button onClick={()=>createRide("Auto")}>{fare.Auto}</button>
+        <button onClick={()=>{
+          vehicleType("Auto")
+          setConfirmRidePanel(true)}}>{fare.Auto}</button>
       </ul>
     </div>
 
-    <div className="mb-4" onClick={()=>createRide("Car")}>
+    <div className="mb-4" onClick={()=>{vehicleType("Car")
+      setConfirmRidePanel(true)}
+    }>
       <h2 className="text-lg font-semibold text-gray-800">Car Rides</h2>
       <ul className="space-y-4">
         {/* Displaying Car Rides */}
@@ -21,7 +25,9 @@ const VehiclePanel = ({fare,createRide}) => {
       </ul>
     </div>
 
-    <div className="mb-4" onClick={()=>createRide("Bike")}>
+    <div className="mb-4" onClick={()=>{vehicleType("Bike")
+      setConfirmRidePanel(true)
+    }}>
       <h2 className="text-lg font-semibold text-gray-800">Bike Rides</h2>
       <ul className="space-y-4">
         {/* Displaying Bike Rides */}
