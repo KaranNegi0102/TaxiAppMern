@@ -1,6 +1,6 @@
 const rideService = require("../services/rideService");
 const {validationResult} = require("express-validator");
-const maps = require("../services/maps.sevice");
+const mapService = require("../services/maps.sevice");
 const {sendMessageToSocketId} = require("../socket");
 // const {query} = require("express-validator");
 module.exports.createRide = async(req,res)=>{
@@ -19,23 +19,30 @@ module.exports.createRide = async(req,res)=>{
   const user = req.user._id;
   // console.log("this is userID ->> ",user);
 
-  try{
-    const ride = await rideService.createRide({user,pickup,destination,vehicleType});
-    // console.log("this is ride 2 -> ",ride);
-    res.status(200).json(ride);
+  try {
+    const ride = await rideService.createRide({ user: req.user._id, pickup, destination, vehicleType });
+    res.status(201).json(ride);
 
-    const pickupCoordinates = await maps.getAddressCoordinates(pickup);
-    console.log("pickup ke coordinates -> ",pickupCoordinates.ltd,pickupCoordinates.lng);
-     
-    const captainsInRadius = await maps.getCaptainsInTheRadius(pickupCoordinates.ltd, pickupCoordinates.lng, 2);
-    console.log(captainsInRadius);
+    const pickupCoordinates = await mapService.getAddressCoordinates(pickup);
+                                              
 
-    ride.otp = " "
 
-    captainsInRadius.map(async (captain) => {
-      console.log("this is captain and ride -> ",captain,ride);
-      sendMessageToSocketId(captain.socketId, {event: "new-ride", data: ride});
-    })
+
+    const captainsInRadius = await mapService.getCaptainsInTheRadius(pickupCoordinates.ltd, pickupCoordinates.lng, 2);
+    console.log("this is captainsInRadius -> ", captainsInRadius);
+
+    // ride.otp = ""
+
+    // const rideWithUser = await rideModel.findOne({ _id: ride._id }).populate('user');
+
+    // captainsInRadius.map(captain => {
+
+    //     sendMessageToSocketId(captain.socketId, {
+    //         event: 'new-ride',
+    //         data: rideWithUser
+    //     })
+
+    // })
 
 
   }catch(err){

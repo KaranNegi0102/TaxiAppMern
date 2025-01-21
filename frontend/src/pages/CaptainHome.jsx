@@ -28,16 +28,16 @@ const CaptainHome = () => {
             navigator.geolocation.getCurrentPosition(position => {
 
               console.log({userId: captain._id,
-                location: {
-                    ltd: position.coords.latitude,
-                    lng: position.coords.longitude
+                location: { 
+                  lng: position.coords.longitude,
+                  ltd: position.coords.latitude
                 }});
 
                 socket.emit('update-location-captain', {
                     userId: captain._id,
                     location: {
-                        ltd: position.coords.latitude,
-                        lng: position.coords.longitude
+                      lng: position.coords.longitude,
+                      ltd: position.coords.latitude
                     }
                 })
             })

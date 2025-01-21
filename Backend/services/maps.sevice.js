@@ -29,8 +29,8 @@ module.exports.getAddressCoordinates = async (address) => {
 
       // Return the coordinates as an object
       return {
-        ltd: location.lat,
         lng: location.lng,
+        ltd: location.lat
       };
     } else {
       throw new Error(`Geocoding API error: ${response.data.status}`);
@@ -87,22 +87,42 @@ module.exports.autoComplete = async (input) => {
   }
 }
 
+// module.exports.getCaptainsInTheRadius = async (ltd, lng, radius) => {
+
+//   // console.log("Latitude: 1", ltd);
+//   // console.log("Longitude: 2", lng);
+//   // console.log("Radius (km): 3", radius);
+
+  
+
+//   // console.log("this value -> ",await captainModel.findOne({
+//   //   location:{
+//   //     $geoWithin: {
+//   //       $centerSphere: [ [28.573696,77.4733824 ], radius / 6371 ]
+//   //     }
+//   //   }
+//   // }));
+
+//   // const allCaptain = await captainModel.find();
+//   // console.log("Captains found:", allCaptain);
+  
+
+//   const captain = await captainModel.findOne({
+//       location: {
+//           $geoWithin: {
+//               $centerSphere: [ [ ltd, lng ], radius / 6371 ]
+//           }
+//       }
+//   });
+//   return captain;
+
+
+// }
+
 module.exports.getCaptainsInTheRadius = async (ltd, lng, radius) => {
 
-  console.log("Latitude:", ltd);
-  console.log("Longitude:", lng);
-  console.log("Radius (km):", radius);
+  // radius in km
 
-  
-
-  console.log(await captainModel.findOne({
-    location:{
-      $geoWithin: {
-        $centerSphere: [ [ lng, ltd ], radius / 6371 ]
-      }
-    }
-  }));
-  
 
   const captains = await captainModel.find({
       location: {
@@ -111,8 +131,6 @@ module.exports.getCaptainsInTheRadius = async (ltd, lng, radius) => {
           }
       }
   });
-  console.log("Querying captains with:", { lng, ltd, radius });
-  console.log("Captains found:", captains);
 
   return captains;
 
