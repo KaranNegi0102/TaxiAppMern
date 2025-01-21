@@ -1,7 +1,7 @@
 //ek method se location ka coordinates like longitutde and latitude pata chalega 
 // dusre method se do location ka distance pata chalega
 
-
+const captainModel = require("../models/captainModel");
 const axios = require('axios');
 
 
@@ -29,7 +29,7 @@ module.exports.getAddressCoordinates = async (address) => {
 
       // Return the coordinates as an object
       return {
-        lat: location.lat,
+        ltd: location.lat,
         lng: location.lng,
       };
     } else {
@@ -85,4 +85,36 @@ module.exports.autoComplete = async (input) => {
     // console.log("this is error -> ",err);
     res.status(500).json({message: "Internal server error"});
   }
+}
+
+module.exports.getCaptainsInTheRadius = async (ltd, lng, radius) => {
+
+  console.log("Latitude:", ltd);
+  console.log("Longitude:", lng);
+  console.log("Radius (km):", radius);
+
+  
+
+  console.log(await captainModel.findOne({
+    location:{
+      $geoWithin: {
+        $centerSphere: [ [ lng, ltd ], radius / 6371 ]
+      }
+    }
+  }));
+  
+
+  const captains = await captainModel.find({
+      location: {
+          $geoWithin: {
+              $centerSphere: [ [ ltd, lng ], radius / 6371 ]
+          }
+      }
+  });
+  console.log("Querying captains with:", { lng, ltd, radius });
+  console.log("Captains found:", captains);
+
+  return captains;
+
+
 }

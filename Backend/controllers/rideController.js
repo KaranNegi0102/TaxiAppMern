@@ -1,5 +1,7 @@
 const rideService = require("../services/rideService");
 const {validationResult} = require("express-validator");
+const maps = require("../services/maps.sevice");
+const {sendMessageToSocketId} = require("../socket");
 // const {query} = require("express-validator");
 module.exports.createRide = async(req,res)=>{
 
@@ -21,10 +23,25 @@ module.exports.createRide = async(req,res)=>{
     const ride = await rideService.createRide({user,pickup,destination,vehicleType});
     // console.log("this is ride 2 -> ",ride);
     res.status(200).json(ride);
-    
+
+    const pickupCoordinates = await maps.getAddressCoordinates(pickup);
+    console.log("pickup ke coordinates -> ",pickupCoordinates.ltd,pickupCoordinates.lng);
+     
+    const captainsInRadius = await maps.getCaptainsInTheRadius(pickupCoordinates.ltd, pickupCoordinates.lng, 2);
+    console.log(captainsInRadius);
+
+    ride.otp = " "
+
+    captainsInRadius.map(async (captain) => {
+      console.log("this is captain and ride -> ",captain,ride);
+      sendMessageToSocketId(captain.socketId, {event: "new-ride", data: ride});
+    })
+
+
   }catch(err){
-    // console.log("kya yaha par h error --> ride controller");
-    res.status(500).json({error: err.message});
+    console.log("kya yaha par h error --> ride controller" , err);
+    // res.status(500).json({error: err.message});
+    
   }
 
 

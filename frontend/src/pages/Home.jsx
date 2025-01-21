@@ -37,7 +37,7 @@ const Home = () => {
 
   useEffect(() => {
     socket.emit("join", { userType: "user", userId: user._id })
-  }, [ user ])
+  }, [ user ]) 
 
   // socket.on('ride-confirmed', ride => {
   //     setVehicleFound(false)

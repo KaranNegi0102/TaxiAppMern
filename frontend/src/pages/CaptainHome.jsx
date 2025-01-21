@@ -15,11 +15,46 @@ const CaptainHome = () => {
 
   const { socket } = useContext(SocketContext);
   const { captain } = useContext(CaptainDataContext);
+  
 
 
-  useEffect(()=>{
-    socket.emit("join", { userType: "captain", userId: captain._id })
-  })
+  useEffect(() => {
+    socket.emit('join', {
+        userId: captain._id,
+        userType: 'captain'
+    })
+    const updateLocation = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(position => {
+
+              console.log({userId: captain._id,
+                location: {
+                    ltd: position.coords.latitude,
+                    lng: position.coords.longitude
+                }});
+
+                socket.emit('update-location-captain', {
+                    userId: captain._id,
+                    location: {
+                        ltd: position.coords.latitude,
+                        lng: position.coords.longitude
+                    }
+                })
+            })
+        }
+    }
+
+    const locationInterval = setInterval(updateLocation, 10000)
+    updateLocation()
+
+    // return () => clearInterval(locationInterval)
+},[])
+
+socket.on('new-ride',(data)=>{
+  console.log(data); 
+});
+
+
 
   useEffect(() => {
     setAvailableRides([
