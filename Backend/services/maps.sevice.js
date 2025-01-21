@@ -50,7 +50,7 @@ module.exports.getDistanceTime = async (origin, destination) => {
 
   try{
     const response = await axios.get(`https://maps.gomaps.pro/maps/api/distancematrix/json?units=metric&origins=${origin}&destinations=${destination}&key=${GOOGLE_MAPS_API_KEY}`);
-    console.log("this is response of mapsSercie -> ",response.data);
+    // console.log("this is response of mapsSercie -> ",response.data);
     
     if(response.data.rows[0].elements[0].status === "ZERO_RESULTS"){
       throw new Error("No route found between the two locations");}
@@ -95,10 +95,10 @@ module.exports.autoComplete = async (input) => {
 
   
 
-//   // console.log("this value -> ",await captainModel.findOne({
+//   // console.log("this value  in maps service 1 -> ",await captainModel.find({
 //   //   location:{
 //   //     $geoWithin: {
-//   //       $centerSphere: [ [28.573696,77.4733824 ], radius / 6371 ]
+//   //       $centerSphere: [ [ 28.573696,77.4733824], radius / 6371 ]
 //   //     }
 //   //   }
 //   // }));
@@ -107,7 +107,7 @@ module.exports.autoComplete = async (input) => {
 //   // console.log("Captains found:", allCaptain);
   
 
-//   const captain = await captainModel.findOne({
+//   const captain = await captainModel.find({
 //       location: {
 //           $geoWithin: {
 //               $centerSphere: [ [ ltd, lng ], radius / 6371 ]
@@ -119,20 +119,24 @@ module.exports.autoComplete = async (input) => {
 
 // }
 
+
 module.exports.getCaptainsInTheRadius = async (ltd, lng, radius) => {
+  try {
+    // Ensure radius is in radians (divide kilometers by Earth's radius in km)
+    const radiusInRadians = radius / 6371; // Earth's radius is approximately 6371 km
 
-  // radius in km
-
-
-  const captains = await captainModel.find({
+    const captains = await captainModel.find({
       location: {
-          $geoWithin: {
-              $centerSphere: [ [ ltd, lng ], radius / 6371 ]
-          }
-      }
-  });
+        $geoWithin: {
+          $centerSphere: [[lng, ltd], radiusInRadians],
+        },
+      },
+    });
 
-  return captains;
+    return captains;
+  } catch (error) {
+    console.error("Error finding captains within radius:", error.message);
+    throw error;
+  }
+};
 
-
-}

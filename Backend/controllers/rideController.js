@@ -6,30 +6,27 @@ const {sendMessageToSocketId} = require("../socket");
 module.exports.createRide = async(req,res)=>{
 
   const errors = validationResult(req);
-
-  // console.log(query('pickup').isString().isLength({min:3}).withMessage("Origin is required"));
-
   if(!errors.isEmpty()){
-    // console.log("yaha par error h yaar --> createRide controller error validation ");
     return res.status(400).json({errors: errors.array()});
   }
 
   const {pickup,destination,vehicleType} = req.query;
-  // console.log("this is req.body ->> ",req.query);
   const user = req.user._id;
-  // console.log("this is userID ->> ",user);
 
   try {
     const ride = await rideService.createRide({ user: req.user._id, pickup, destination, vehicleType });
     res.status(201).json(ride);
 
     const pickupCoordinates = await mapService.getAddressCoordinates(pickup);
-                                              
+    console.log("this is pickupCoordinates -> ", pickupCoordinates.lng,pickupCoordinates.ltd);
 
-
-
-    const captainsInRadius = await mapService.getCaptainsInTheRadius(pickupCoordinates.ltd, pickupCoordinates.lng, 2);
+    const captainsInRadius = await mapService.getCaptainsInTheRadius(
+      pickupCoordinates.ltd, 
+      pickupCoordinates.lng, 
+      2 // Radius in kilometers
+    );
     console.log("this is captainsInRadius -> ", captainsInRadius);
+    
 
     // ride.otp = ""
 

@@ -44,7 +44,7 @@ const CaptainHome = () => {
         }
     }
 
-    const locationInterval = setInterval(updateLocation, 10000)
+    const locationInterval = setInterval(updateLocation, 90000)
     updateLocation()
 
     // return () => clearInterval(locationInterval)
